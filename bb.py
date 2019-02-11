@@ -1,4 +1,8 @@
+import datetime
+import random
+
 import configparser
+import papirusController
 import os
 
 CONFIG_FILE = "config.ini"
@@ -19,5 +23,8 @@ def read_config_file(config_file):
         config.read(config_file)
         return config
 
+        # papirusController.drawScreen()
+
 
 config = read_config_file(CONFIG_FILE)
+papirusController = papirusController.PapirusController()
