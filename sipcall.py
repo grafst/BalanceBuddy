@@ -17,10 +17,9 @@ class SipCallGetter:
     def _login(self):
         try:
             sipcall_session = requests.session()
-            sipcall_session.get(self.login_url)
-            print(sipcall_session)
+            response = sipcall_session.get(self.login_url)
+            response.raise_for_status()
         except:
-            print("error")
             error("cannot connect to '%s'.Internet Connection? DNS? Correct URL in config file?", self.login_url)
             return None
         login = {
@@ -32,11 +31,10 @@ class SipCallGetter:
             'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0"
         }
         response_login = sipcall_session.post(self.login_url, data=login, headers=login_headers)
-
+        print(response_login)
         return sipcall_session
 
 
 if __name__ == '__main__':
     sipcallGetter = SipCallGetter()
-    sipcallGetter._login() #todo: remove when app is finished
-
+    sipcallGetter._login()  # todo: remove when app is finished

@@ -23,13 +23,13 @@ class TestSipCall(unittest.TestCase):
          self.assertRaises(requests.RequestException, self.sipCallGetter._login)
     """
 
-    def test_if_login_logs_error_on_http400(self):
+    def test_if_login_logs_error_on_http404(self):
         httpretty.register_uri(httpretty.GET, self.sipCallGetter.login_url, body="", status=404)
         with self.assertLogs(self.logger, level='ERROR'):
             self.sipCallGetter._login()
 
     def test_sucessful_login_returns_a_session_object(self):
-        # todo: make sure its sucessful
+        httpretty.register_uri(httpretty.POST, self.sipCallGetter.login_url, body="", status=200)
         sipCallGetter = sipcall.SipCallGetter()
         self.assertIsInstance(sipCallGetter._login(), requests.Session)
 
