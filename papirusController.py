@@ -1,13 +1,13 @@
 # coding=utf-8
 import datetime
 import random
+import sched
+import time
 from threading import Timer
 
 from papirus import PapirusComposite
 
 from Call import Call
-
-UPDATEINTERVAL = datetime.timedelta(seconds=5)
 
 
 def test_callList():
@@ -32,17 +32,8 @@ PapirusComposite.SetText = setText
 class PapirusController():
 
     def __init__(self):
-        self._lastUpdated = datetime.datetime.now()
         self._screen = PapirusComposite(False, 180)
-        self.drawScreen()
-        self._updateTimer = Timer(UPDATEINTERVAL.seconds, self.update)
-        self._updateTimer.start()
-
-    def update(self):
-        self.drawScreen()
-        self._updateTimer = Timer(UPDATEINTERVAL.seconds, self.update)
-        self._lastUpdated = datetime.datetime.now()
-        self._updateTimer.start()
+        # todo: init animation
 
     def drawGroupName(self, groupName):
         self._screen.SetText(groupName, 10, 10, "groupName", size=18)
@@ -55,18 +46,18 @@ class PapirusController():
     def drawCeviZeichen(self):
         self._screen.AddImg("cevilogo.tif", 204, 10, size=(50, 50))
 
-    def drawScreen(self):
-        self.drawGroupName("CHRISTOPF VOGEL")
+    def drawScreen(self, lastUpdated, cost, callList):
+        self.drawGroupName("MC NUGGET")
         self.drawCeviZeichen()
-        self.drawLastUpdated()
-        self.drawCost(53.50)
+        self.drawLastUpdated(lastUpdated)
+        self.drawCost(cost)
         self.drawGroupDate(datetime.date(2019, 02, 10), datetime.date(2019, 02, 15))
         self.drawLines()
-        self.drawList(test_callList())
+        self.drawList(callList)
         self._screen.WriteAll()
 
-    def drawLastUpdated(self):
-        self._screen.SetText(self._lastUpdated.strftime("Zuletzt aktualisiert: %d.%m.%Y %H:%M:%S"), 10, 158, size=12,
+    def drawLastUpdated(self, lastUpdated):
+        self._screen.SetText(lastUpdated.strftime("Zuletzt aktualisiert: %d.%m.%Y %H:%M:%S"), 10, 158, size=12,
                              Id="lastupdated")
 
     def drawCost(self, cost):
@@ -76,7 +67,7 @@ class PapirusController():
         for call in callList:
             print(call)
         start_y = 82
-        for i in range(0,4):
+        for i in range(0, 4):
             self._screen.RemoveText("date" + str(i))
             self._screen.RemoveText("duration" + str(i))
             self._screen.RemoveText("cost" + str(i))
