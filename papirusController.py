@@ -1,14 +1,9 @@
 # coding=utf-8
 import datetime
 import random
-import time
 from threading import Timer
 
-import papirus
-from PIL import Image, ImageDraw
 from papirus import PapirusComposite
-from papirus.composite import BLACK
-from papirus.image import WHITE
 
 from Call import Call
 
@@ -18,9 +13,9 @@ UPDATEINTERVAL = datetime.timedelta(seconds=5)
 def test_callList():
     COST_PER_MINUTE = 1.20
     callList = []
-    for i in range(0, 5):
+    for i in range(0, random.randrange(0, 5)):
         minutes = random.randrange(1, 20)
-        callList.append(Call(time=datetime.datetime.now(), duration=datetime.timedelta(minutes=minutes),
+        callList.append(Call(time=datetime.datetime.now(), billedMinutes=minutes,
                              cost=minutes * COST_PER_MINUTE))
     return callList
 
@@ -78,18 +73,22 @@ class PapirusController():
         self._screen.SetText("Fr. " + "%.2f" % cost, 10, 40, size=30, Id="cost")
 
     def drawList(self, callList):
+        for call in callList:
+            print(call)
         start_y = 82
-        print(str(callList))
+        for i in range(0,4):
+            self._screen.RemoveText("date" + str(i))
+            self._screen.RemoveText("duration" + str(i))
+            self._screen.RemoveText("cost" + str(i))
         if not callList:
-            # todo: liste löschen
-            self._screen.SetText("Keine ausgehende Telefonate")
+            self._screen.SetText("Keine ausgehende Telefonate", 10, start_y, size=12, Id="date0")
         else:
             i = 0
             for call in callList:
-                if i < 3:
+                if i < 3 or (i == 3 and callList.__len__() == 4):
                     self._screen.SetText(call.time.strftime("%d.%m.%Y %H:%M"), 10, start_y + i * 15, size=12,
                                          Id="date" + str(i))
-                    self._screen.SetText(str(call.duration) + "min", 133, start_y + i * 15, size=12,
+                    self._screen.SetText("%02i min" % call.billedMinutes, 133, start_y + i * 15, size=12,
                                          Id="duration" + str(i))
                     self._screen.SetText(str(call.cost) + " CHF", 187, start_y + i * 15, size=12, Id="cost" + str(i))
                 elif i < 4:
@@ -98,9 +97,10 @@ class PapirusController():
                 else:
                     break
                 i += 1
+        self.callList = test_callList()
 
     def drawGroupDate(self, fromDate, toDate):
         dateformat = "%d.%m"
-        self._screen.SetText(fromDate.strftime(dateformat) + " - " + toDate.strftime(dateformat), 146, 58, "groupDate",
+        self._screen.SetText(fromDate.strftime(dateformat) + " - " + toDate.strftime(dateformat), 146, 56, "groupDate",
                              size=12)
         pass

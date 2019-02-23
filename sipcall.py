@@ -2,9 +2,9 @@ import configparser
 from logging import error
 
 import requests
-import bb
+import balancebuddy
 
-config = bb.read_config_file(bb.CONFIG_FILE)
+config = balancebuddy.read_config_file(balancebuddy.CONFIG_FILE)
 
 
 class SipCallGetter:

@@ -3,7 +3,7 @@ import sys
 import unittest
 import requests
 from httpretty import httpretty
-import bb
+import balancebuddy
 import sipcall
 
 
@@ -34,7 +34,7 @@ class TestSipCall(unittest.TestCase):
         self.assertIsInstance(sipCallGetter._login(), requests.Session)
 
     def test_configfile_sipcall_section(self):
-        self.assertTrue(bb.config.has_section("sipcall"))
+        self.assertTrue(balancebuddy.config.has_section("sipcall"))
         missing_subtests = (
             # A tuple of (option_name, subtest_description)
             ('username', 'Missing the first_name field'),
@@ -43,4 +43,4 @@ class TestSipCall(unittest.TestCase):
         )
         for option_name, subtest_description in missing_subtests:
             with self.subTest(subtest_description):
-                self.assertTrue(bb.config.has_option("sipcall", option_name))
+                self.assertTrue(balancebuddy.config.has_option("sipcall", option_name))
